@@ -84,6 +84,10 @@ public class Gauss {
                 }
             }
         }
+        System.out.print("\n\t\t\t");
+        for (int i = 0; i < n; i++)
+            System.out.print("    "+(char)('a'+i)+"   = "+"%-14s".formatted(extendedMatrix[i][m-1]));
+        System.out.print('\n');
     }
 
     public boolean isRowZero(int index){

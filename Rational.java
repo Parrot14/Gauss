@@ -1,27 +1,27 @@
 package Gauss;
 
-public class Frac{
+public class Rational{
 
-    public static final Frac ONE = new Frac(1);
-    public static final Frac ZERO = new Frac(0);
+    public static final Rational ONE = new Rational(1);
+    public static final Rational ZERO = new Rational(0);
 
     private int numerator, denominator;
     private boolean positive;
 
-    private Frac(int numerator, int denominator, boolean positive){
+    private Rational(int numerator, int denominator, boolean positive){
         this.numerator = numerator;
         this.denominator = denominator;
         this.positive = positive;
     }
 
-    public Frac(int numerator, int denominator){
+    public Rational(int numerator, int denominator){
         this.numerator = Math.abs(numerator);
         this.denominator = Math.abs(denominator);
         this.positive = numerator == 0 || (numerator>0) == (denominator>0);
         reduce();
     }
 
-    public Frac(int number){
+    public Rational(int number){
         this.numerator = Math.abs(number);
         this.denominator = 1;
         this.positive = number>=0;
@@ -34,7 +34,7 @@ public class Frac{
     }
 
     // Multiplicative Inverse
-    public Frac mInverse(){
+    public Rational mInverse(){
         int temp = numerator;
         numerator = denominator;
         denominator = temp;
@@ -42,35 +42,35 @@ public class Frac{
     }
 
     // Aditive Inverse
-    public Frac aInverse(){
+    public Rational aInverse(){
         positive = !positive;
         return this;
     }
 
-    public Frac copy(){
-        return new Frac(numerator, denominator, positive);
+    public Rational copy(){
+        return new Rational(numerator, denominator, positive);
     }
 
-    public Frac copyTo(Frac frac){
+    public Rational copyTo(Rational frac){
         frac.numerator = numerator;
         frac.denominator = denominator;
         frac.positive = positive;
         return frac;
     }
 
-    public Frac multiply(int number){
+    public Rational multiply(int number){
         return rawMultiply(number).fixSign().reduce();
     }
 
-    public Frac multiply(Frac frac){
+    public Rational multiply(Rational frac){
         return rawMultiply(frac).fixSign().reduce();
     }
 
-    public Frac add(int number){
+    public Rational add(int number){
         return rawAdd(number).fixSign().reduce();
     }
 
-    public Frac add(Frac frac){
+    public Rational add(Rational frac){
         return rawAdd(frac).fixSign().reduce();
     }
 
@@ -81,8 +81,8 @@ public class Frac{
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof Frac){
-            Frac frac = (Frac) obj;
+        if(obj instanceof Rational){
+            Rational frac = (Rational) obj;
             return  frac.positive    == positive    &&
                     frac.denominator == denominator &&
                     frac.numerator   == numerator;
@@ -98,14 +98,14 @@ public class Frac{
         return numerator == 0;
     }
 
-    private Frac reduce(){
+    private Rational reduce(){
         int gcd = gcd(numerator, denominator);
         numerator /= gcd;
         denominator /= gcd;
         return this;
     }
 
-    private Frac fixSign(){
+    private Rational fixSign(){
         if(numerator<0){
             numerator *= -1;
             aInverse();
@@ -114,19 +114,19 @@ public class Frac{
         return this;
     }
 
-    private Frac rawMultiply(int number){
+    private Rational rawMultiply(int number){
         numerator *= number;
         return this;
     }
 
-    private Frac rawMultiply(Frac frac){
+    private Rational rawMultiply(Rational frac){
         positive = positive == frac.positive;
         numerator *= frac.numerator;
         denominator *= frac.denominator;
         return this;
     }
 
-    private Frac rawAdd(int number){
+    private Rational rawAdd(int number){
         if(positive)
             numerator += denominator*number;
         else
@@ -134,7 +134,7 @@ public class Frac{
         return this;
     }
 
-    private Frac rawAdd(Frac frac){
+    private Rational rawAdd(Rational frac){
         numerator *= frac.denominator;
         numerator += (positive == frac.positive?1:-1)*frac.numerator*denominator;
         denominator *= frac.denominator;

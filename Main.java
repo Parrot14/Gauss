@@ -5,7 +5,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Gauss.Frac;
+import Gauss.Rational;
 import Gauss.Gauss;
 
 public class Main {
@@ -31,7 +31,7 @@ public class Main {
         }).compute(); */
     }
 
-    public static Frac[][] getData(){
+    public static Rational[][] getData(){
         Scanner sc = new Scanner(System.in);
 
         System.out.println("De que tamaño es su sitema cuadrado...");
@@ -45,7 +45,7 @@ public class Main {
             System.out.println("Numero mal formado, intentelo de nuevo.");
         }
 
-        Frac[][] fracs = new Frac[n][n+1];
+        Rational[][] fracs = new Rational[n][n+1];
 
         System.out.println("Introduzca los valores...{int|float}[/int]");
         for (int i = 0; i < n; i++) {
@@ -54,7 +54,7 @@ public class Main {
                 while(true){
                     System.out.print(line);
                     String input = sc.nextLine().trim();
-                    Frac frac = toFraction(input);
+                    Rational frac = toFraction(input);
                     if(frac == null){
                         System.out.println("Numero mal formado, intentelo de nuevo.");
                         continue;
@@ -74,7 +74,7 @@ public class Main {
 
     private static Pattern pat = Pattern.compile("(^(?:\\+|-)?\\d+)(?:\\.(\\d+))?(?:\\/(\\d+))?$");
 
-    public static Frac toFraction(String str){
+    public static Rational toFraction(String str){
         String[] str_frac = str.split("/", 1);
         int numerator;
         int denominator = 1;
@@ -93,7 +93,7 @@ public class Main {
             if(decimal_str != null)
                 for (int i = 0; i < decimal_str.length(); i++)
                     denominator *= 10;
-            return new Frac(numerator, denominator);
+            return new Rational(numerator, denominator);
         }
         return null;
     }

@@ -45,7 +45,7 @@ public class Main {
             System.out.println("Numero mal formado, intentelo de nuevo.");
         }
 
-        Rational[][] fracs = new Rational[n][n+1];
+        Rational[][] nums = new Rational[n][n+1];
 
         System.out.println("Introduzca los valores...{int|float}[/int]");
         for (int i = 0; i < n; i++) {
@@ -54,14 +54,14 @@ public class Main {
                 while(true){
                     System.out.print(line);
                     String input = sc.nextLine().trim();
-                    Rational frac = toFraction(input);
-                    if(frac == null){
+                    Rational rational = toRational(input);
+                    if(rational == null){
                         System.out.println("Numero mal formado, intentelo de nuevo.");
                         continue;
                     }
 
                     line += input+" ] [ ";
-                    fracs[i][j] = frac;
+                    nums[i][j] = rational;
                     System.out.print("\u001B[A");
                     break;
                 }
@@ -69,16 +69,15 @@ public class Main {
             System.out.print(line.substring(0, line.length()-2)+"\n");
         }
 
-        return fracs;
+        return nums;
     }
 
     private static Pattern pat = Pattern.compile("(^(?:\\+|-)?\\d+)(?:\\.(\\d+))?(?:\\/(\\d+))?$");
 
-    public static Rational toFraction(String str){
-        String[] str_frac = str.split("/", 1);
+    public static Rational toRational(String str){
         int numerator;
         int denominator = 1;
-        Matcher match = pat.matcher(str_frac[0]);
+        Matcher match = pat.matcher(str);
         if(match.matches()){
             String numerator_str = match.group(1), decimal_str = match.group(2), denominator_str = match.group(3);
             

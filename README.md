@@ -13,7 +13,7 @@ $ javac -d ./.build *.java
 ## Running
 Once compiled you can run it by entering the *.build* folder and running the command:
 ```
-$ java Gauss/Java
+$ java Gauss/Main
 ```
 
 ---

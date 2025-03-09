@@ -39,53 +39,13 @@ public class Gauss {
     }
 
     public void compute(){
-        System.out.println("\t\t\t\t---- GAUSS ----");
-        for (int i = 0; i < n; i++) {
-            System.out.println(this);
-            int row_ready = findReadyRow(i);
-            if(row_ready != -1){
-                if(row_ready != i){
-                    switchRows(i, row_ready);
-                    System.out.println(this);
-                }
-                if(!extendedMatrix[i][i].equals(Rational.ONE)){
-                    extendedMatrix[i][i].copyTo(aux).mInverse();
-                    multiplyRow(aux, i);
-                    System.out.println(this);
-                }
-            }else if(!extendedMatrix[i][i].equals(Rational.ONE)){
-                int findone = findBelow(i, Rational.ONE);
-                if(findone != -1){
-                    switchRows(i, findone);
-                }else{
-                    if(extendedMatrix[i][i].equals(Rational.ZERO)){
-                        int findany = findFirstDiferentBelow(i, Rational.ZERO);
-                        if(findany != -1){
-                            switchRows(n, findany);
-                            System.out.println(this);
-                        }else{
-                            if(isRowZero(n-1))
-                                System.out.println("\t\t\t----- SOLUCIÓN MULTIPLE -----");
-                            else
-                                System.out.println("\t\t\t----- SIN SOLUCIÓN -----");
-                            return;
-                        }
-                    }
-                    extendedMatrix[i][i].copyTo(aux).mInverse();
-                    multiplyRow(aux, i);
-                }
-                System.out.println(this);
-            }
+        computeGauss();
+        computeJordan();
+    }
 
-            for (int j = i+1; j < n; j++) {
-                if(!extendedMatrix[j][i].equals(Rational.ZERO)){
-                    extendedMatrix[j][i].copyTo(aux).aInverse();
-                    mulSum(aux, i, j);
-                }
-            }
-        }
+    private void computeJordan(){
         System.out.println("\t\t\t\t---- JORDAN ----");
-        for (int i = n-1; i >= 0; i--) {
+        for (int i = m<n ? m-1: n-1; i >= 0; i--) {
             System.out.println(this);
             for (int j = i-1; j >= 0; j--) {
                 if(!extendedMatrix[j][i].equals(Rational.ZERO)){
@@ -100,16 +60,79 @@ public class Gauss {
         System.out.print('\n');
     }
 
+    private boolean computeGauss(){
+        System.out.println("\t\t\t\t---- GAUSS ----");
+        for (int i = 0; i < n; i++) {
+            System.out.println(this);
+            // See if there is a single variable equation(shortcut)
+            int row_ready = findReadyRow(i);
+            if(row_ready != -1){
+                // Prevent switching row with itselft
+                if(row_ready != i){
+                    switchRows(i, row_ready);
+                    System.out.println(this);
+                }
+                // Ensure coefficient equals to one
+                if(!extendedMatrix[i][i].equals(Rational.ONE)){
+                    extendedMatrix[i][i].copyTo(aux).mInverse();
+                    multiplyRow(aux, i);
+                    System.out.println(this);
+                }
+            // Ensure coefficient equals to one
+            }else if(!extendedMatrix[i][i].equals(Rational.ONE)){
+                // See if there is a row with coefficient equals to one
+                int findone = findBelow(i, Rational.ONE);
+                if(findone != -1){
+                    switchRows(i, findone);
+                }else{
+                    if(!ensureNotZero(i))
+                        return false;
+                    extendedMatrix[i][i].copyTo(aux).mInverse();
+                    multiplyRow(aux, i);
+                }
+                System.out.println(this);
+            }
+
+            for (int j = i+1; j < n; j++) {
+                if(!extendedMatrix[j][i].equals(Rational.ZERO)){
+                    extendedMatrix[j][i].copyTo(aux).aInverse();
+                    mulSum(aux, i, j);
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean ensureNotZero(int index){
+        // Ensure coefficient is not zero
+        if(extendedMatrix[index][index].equals(Rational.ZERO)){
+            int findany = findFirstDiferentBelow(index, Rational.ZERO);
+            if(findany != -1){
+                switchRows(n, findany);
+                System.out.println(this);
+            }else{
+                if(isRowZero(n-1))
+                    System.out.println("\t\t\t----- SOLUCIÓN MULTIPLE -----");
+                else
+                    System.out.println("\t\t\t----- SIN SOLUCIÓN -----");
+                return false;
+            }
+        }
+        return true;
+    }
+
     public int findReadyRow(int index){
         for (int i = index; i < n; i++)
-            if(isRowReady(i))
+            if(isRowReady(i, index))
                 return i;
         return -1;
     }
     
-    public boolean isRowReady(int index){
-        for(int i = index+1; i < m-1; i++)
-            if(!extendedMatrix[index][i].isZero())
+    public boolean isRowReady(int nindex, int mindex){
+        if(extendedMatrix[nindex][mindex].isZero())
+            return false;
+        for(int i = mindex+1; i < m-1; i++)
+            if(!extendedMatrix[nindex][i].isZero())
                 return false;
         return true;
     }

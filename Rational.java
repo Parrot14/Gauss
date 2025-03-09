@@ -79,6 +79,10 @@ public class Rational{
         return (positive?' ':'-')+" "+numerator+(denominator!=1?"/"+denominator:"");
     }
 
+    public String toSignedString(){
+        return (positive?'+':'-')+(!(numerator==denominator&&numerator==1)?" "+numerator+(denominator!=1?"/"+denominator:""):"");
+    }
+
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof Rational){

@@ -1,5 +1,7 @@
 package Gauss;
 
+import Gauss.Rational;
+
 public class Gauss {
     private Rational [][] extendedMatrix;
     private Rational aux = new Rational(0);
@@ -39,8 +41,32 @@ public class Gauss {
     }
 
     public void compute(){
-        computeGauss();
+        if(!computeGauss())
+            return;
+        if(!areRowNBelowZero(m-1)){
+            System.out.println("\t\t\t----- SIN SOLUCIÓN -----");
+            System.out.println(this);
+            return;
+        }
         computeJordan();
+        printResult();
+    }
+
+    private void printResult(){
+        for (int i = 0; i < m-1; i++){
+            System.out.print("\n\t");
+            if (i>n-1||extendedMatrix[i][i].isZero()){
+                System.out.print("    "+(char)('a'+i)+"   =   "+(char)('s'+i));
+                continue;
+            }
+            System.out.print("    "+(char)('a'+i)+"   = "+extendedMatrix[i][m-1]);
+            for (int j = i+1; j < m-1; j++) {
+                extendedMatrix[i][j].copyTo(aux).aInverse();
+                if(!aux.isZero())
+                    System.out.print(" "+aux.toSignedString()+" "+(char)('s'+j));
+            }
+        }
+        System.out.print('\n');
     }
 
     private void computeJordan(){
@@ -54,16 +80,17 @@ public class Gauss {
                 }
             }
         }
-        System.out.print("\n\t\t\t");
-        for (int i = 0; i < n; i++)
-            System.out.print("    "+(char)('a'+i)+"   = "+"%-14s".formatted(extendedMatrix[i][m-1]));
-        System.out.print('\n');
     }
 
     private boolean computeGauss(){
         System.out.println("\t\t\t\t---- GAUSS ----");
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < m-1; i++) {
+            if(i>n-1){
+                System.out.println("\t\t\t----- SOLUCIÓN MULTIPLE -----");
+                break;
+            }
             System.out.println(this);
+
             // See if there is a single variable equation(shortcut)
             int row_ready = findReadyRow(i);
             if(row_ready != -1){
@@ -85,8 +112,22 @@ public class Gauss {
                 if(findone != -1){
                     switchRows(i, findone);
                 }else{
-                    if(!ensureNotZero(i))
-                        return false;
+                    // Ensure coefficient is not zero
+                    if(extendedMatrix[i][i].equals(Rational.ZERO)){
+                        int findany = findFirstDiferentBelow(i, Rational.ZERO);
+                        if(findany != -1){
+                            switchRows(n, findany);
+                            System.out.println(this);
+                        }else{
+                            if(areRowNBelowZero(i)){
+                                System.out.println("\t\t\t----- SOLUCIÓN MULTIPLE -----");
+                                return true;
+                            }else{
+                                System.out.println("\t\t\t----- SIN SOLUCIÓN -----");
+                                return false;
+                            }
+                        }
+                    }
                     extendedMatrix[i][i].copyTo(aux).mInverse();
                     multiplyRow(aux, i);
                 }
@@ -100,24 +141,12 @@ public class Gauss {
                 }
             }
         }
+
+        System.out.println(this);
         return true;
     }
 
     private boolean ensureNotZero(int index){
-        // Ensure coefficient is not zero
-        if(extendedMatrix[index][index].equals(Rational.ZERO)){
-            int findany = findFirstDiferentBelow(index, Rational.ZERO);
-            if(findany != -1){
-                switchRows(n, findany);
-                System.out.println(this);
-            }else{
-                if(isRowZero(n-1))
-                    System.out.println("\t\t\t----- SOLUCIÓN MULTIPLE -----");
-                else
-                    System.out.println("\t\t\t----- SIN SOLUCIÓN -----");
-                return false;
-            }
-        }
         return true;
     }
 
@@ -133,6 +162,13 @@ public class Gauss {
             return false;
         for(int i = mindex+1; i < m-1; i++)
             if(!extendedMatrix[nindex][i].isZero())
+                return false;
+        return true;
+    }
+
+    public boolean areRowNBelowZero(int index){
+        for (int i = index; i < n; i++)
+            if(!isRowZero(i))
                 return false;
         return true;
     }

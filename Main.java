@@ -32,23 +32,18 @@ public class Main {
     }
 
     public static Rational[][] getData(){
+
+        System.out.println("De cuantas variables es su sistema...");
+        int n = getNumber();
+        System.out.println("De cuantas ecuaciones es su sistema...");
+        int m = getNumber();
+        
+
+        Rational[][] nums = new Rational[m][n+1];
+
         Scanner sc = new Scanner(System.in);
-
-        System.out.println("De que tamaño es su sitema cuadrado...");
-        int n;
-        while (true) {
-            String num = sc.nextLine();
-            if(num.matches("^\\d+$")){
-                n = Integer.parseInt(num);
-                break;
-            }
-            System.out.println("Numero mal formado, intentelo de nuevo.");
-        }
-
-        Rational[][] nums = new Rational[n][n+1];
-
         System.out.println("Introduzca los valores...{int|float}[/int]");
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < m; i++) {
             String line = "\t[ ";
             for (int j = 0; j <= n; j++) {
                 while(true){
@@ -70,6 +65,20 @@ public class Main {
         }
 
         return nums;
+    }
+
+    private static int getNumber(){
+        Scanner sc = new Scanner(System.in);
+        int n;
+        while (true) {
+            String num = sc.nextLine();
+            if(num.matches("^\\d+$")){
+                n = Integer.parseInt(num);
+                break;
+            }
+            System.out.println("Numero mal formado, intentelo de nuevo.");
+        }
+        return n;
     }
 
     private static Pattern pat = Pattern.compile("(^(?:\\+|-)?\\d+)(?:\\.(\\d+))?(?:\\/(\\d+))?$");

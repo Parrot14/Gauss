@@ -1,7 +1,5 @@
 package Gauss;
 
-import Gauss.Rational;
-
 public class Gauss {
     private Rational [][] extendedMatrix;
     private Rational aux = new Rational(0);
@@ -44,7 +42,16 @@ public class Gauss {
         System.out.println("\t\t\t\t---- GAUSS ----");
         for (int i = 0; i < n; i++) {
             System.out.println(this);
-            if(!extendedMatrix[i][i].equals(Rational.ONE)){
+            int row_ready = findReadyRow(i);
+            if(row_ready != -1){
+                if(row_ready != i){
+                    switchRows(i, row_ready);
+                    System.out.println(this);
+                }
+                extendedMatrix[i][i].copyTo(aux).mInverse();
+                multiplyRow(aux, i);
+                System.out.println(this);
+            }else if(!extendedMatrix[i][i].equals(Rational.ONE)){
                 int findone = findBelow(i, Rational.ONE);
                 if(findone != -1){
                     switchRows(i, findone);
@@ -53,6 +60,7 @@ public class Gauss {
                         int findany = findFirstDiferentBelow(i, Rational.ZERO);
                         if(findany != -1){
                             switchRows(n, findany);
+                            System.out.println(this);
                         }else{
                             if(isRowZero(n-1))
                                 System.out.println("\t\t\t----- SOLUCIÓN MULTIPLE -----");
@@ -88,6 +96,20 @@ public class Gauss {
         for (int i = 0; i < n; i++)
             System.out.print("    "+(char)('a'+i)+"   = "+"%-14s".formatted(extendedMatrix[i][m-1]));
         System.out.print('\n');
+    }
+
+    public int findReadyRow(int index){
+        for (int i = index; i < n; i++)
+            if(isRowReady(i))
+                return i;
+        return -1;
+    }
+    
+    public boolean isRowReady(int index){
+        for(int i = index+1; i < m-1; i++)
+            if(!extendedMatrix[index][i].isZero())
+                return false;
+        return true;
     }
 
     public boolean isRowZero(int index){

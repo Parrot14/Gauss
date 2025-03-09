@@ -48,9 +48,11 @@ public class Gauss {
                     switchRows(i, row_ready);
                     System.out.println(this);
                 }
-                extendedMatrix[i][i].copyTo(aux).mInverse();
-                multiplyRow(aux, i);
-                System.out.println(this);
+                if(!extendedMatrix[i][i].equals(Rational.ONE)){
+                    extendedMatrix[i][i].copyTo(aux).mInverse();
+                    multiplyRow(aux, i);
+                    System.out.println(this);
+                }
             }else if(!extendedMatrix[i][i].equals(Rational.ONE)){
                 int findone = findBelow(i, Rational.ONE);
                 if(findone != -1){

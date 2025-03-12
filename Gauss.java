@@ -116,7 +116,7 @@ public class Gauss {
                     if(extendedMatrix[i][i].equals(Rational.ZERO)){
                         int findany = findFirstDiferentBelow(i, Rational.ZERO);
                         if(findany != -1){
-                            switchRows(n, findany);
+                            switchRows(i, findany);
                             System.out.println(this);
                         }else{
                             if(areRowNBelowZero(i)){
